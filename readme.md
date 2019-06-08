@@ -47,7 +47,7 @@ You can now access the server at http://localhost:8888
 
 ## Environment variables
 
-- `.env` - Environment variables can be set in this file
+Environment variables can be set in this file '.env'
     
     APP_NAME=Laravel
     APP_ENV=local
