@@ -32,12 +32,7 @@ class NotaController extends Controller
         return view('nota')->with('chave', $chave)->with('xml', $xml);
     }
 
-    public function salvarNotas(Request $request)
-    {
-        echo($this->getNfe('35180104710149000115550010000084031000084036'));
-    } 
-    
-    public function getNfe($chv)
+    public function salvarNotas()
     {
         $curl = curl_init();
         
@@ -64,27 +59,49 @@ class NotaController extends Controller
         curl_close($curl);
         $xml = null;
         if ($err) {
-          return "cURL Error #:" . $err;
+          echo "cURL Error #:" . $err;
         } else {
          
             ob_flush();//Flush the data here
 
-            for ($i = 0; $i < count($result['data']); $i++) {
-
-                $chave = $result['data'][$i]['access_key'];
-
-                if($chave == $chv){
-                    $xml = base64_decode($result['data'][$i]['xml']);
-                }
-            }
-
-            if($xml == null){
-                return "Nota não encontrada.";
+            if($result['data'] == null){
+                echo "Serviço indisponível.";
             }
             else{
-                return htmlspecialchars($xml, ENT_QUOTES, 'UTF-8');
+                for ($i = 0; $i < count($result['data']); $i++) {
+
+                    $chave = $result['data'][$i]['access_key'];
+                    $xml = $result['data'][$i]['xml'];
+
+                    $nota = new Nota([
+                        'chave' => $chave,
+                        'xml' => $xml
+                    ]);
+
+                    $nota->save();
+                    
+                }
+                echo "Notas salvas com sucesso.";
             }
-     
         }
+    } 
+    
+    public function getNfe($chv)
+    {
+        if(strlen($chv) != 44){
+            return "Tamanho da chave inválido";
+        }
+        
+        $nota = Nota::getData($chv);
+        
+        if($nota == null){
+            return "Nota não encontrada.";
+        }
+        else{
+            $chave = $nota->chave;
+            $xml = base64_decode($nota->xml);
+            return $xml;
+        }
+      
     }
 }
