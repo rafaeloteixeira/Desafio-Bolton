@@ -6,11 +6,11 @@ services:
 
     redis:
       image: redis:alpine
-      container_name: arquivei-test-redis
+      container_name: desafio-bolton-redis
 
     postgres:
       image: postgres:11.1-alpine
-      container_name: arquivei-test-postgres
+      container_name: desafio-bolton-postgres
       working_dir: /application
       volumes:
         - .:/application
@@ -23,7 +23,7 @@ services:
 
     webserver:
       image: nginx:alpine
-      container_name: arquivei-test-webserver
+      container_name: desafio-bolton-webserver
       working_dir: /application
       volumes:
           - ./src/src:/application
@@ -33,7 +33,7 @@ services:
 
     php-fpm:
       build: phpdocker/php-fpm
-      container_name: arquivei-test-php-fpm
+      container_name: desafio-bolton-php-fpm
       working_dir: /application
       volumes:
         - ./src/src:/application
